@@ -1,0 +1,19 @@
+{
+  "name": "Tokenizer Function",
+  "version": "1.0.0",
+  "description": "This functions servers as a tokenizer for Snowflake External functions",
+  "main": "app.js",
+  "author": "Enrique Plata",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.21.1"
+  },
+  "scripts": {
+    "test": "mocha tests/unit/"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^8.2.1",
+    "aws-sdk": "^2.962.0"
+  }
+}

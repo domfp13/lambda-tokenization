@@ -1,0 +1,71 @@
+# Created by Enrique Plata
+
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Lambda function, functioning as a External Function for Snowflake.
+  Authors: Enrique Plata
+
+Globals:
+  Function:
+    MemorySize: 128
+    Timeout: 20
+
+Resources:
+
+  # API Gateway
+  ApiGateway:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      CorsConfiguration:
+        AllowMethods:
+          - GET
+          - POST
+          - DELETE
+          - OPTIONS
+        AllowHeaders:
+          - "*"
+        AllowOrigins:
+          - "*"
+
+  # Lambda
+  Tokenizer:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: external-function-tokenizer-snowflake
+      Description: >
+        This function is used for Tokenization, Snowflake Data Cloud calls this function, so a string can be return when called.
+      PackageType: Image
+      Environment:
+      Policies:
+      Events:
+        UploadAssetAPI:
+          Type: HttpApi
+          Properties:
+            Path: /tokenize
+            Method: post
+            ApiId: !Ref ApiGateway
+    Metadata:
+      DockerTag: nodejs-runner
+      DockerContext: ./tokenization
+      Dockerfile: Dockerfile
+
+  # CloudWatch Logs
+  ProcessingFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${Tokenizer}
+      RetentionInDays: 7
+
+Outputs:
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  APIendpoint:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com"
+  Tokenizer:
+    Description: "Lambda Function ARN"
+    Value: !GetAtt Tokenizer.Arn
+  TokenizerIamRole:
+    Description: "Implicit IAM Role created for lambda function"
+    Value: !GetAtt TokenizerRole.Arn
