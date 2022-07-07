@@ -39,7 +39,7 @@ deploy: ## (Cloud): Deploy code
 		--image-repository ${ELASTIC-CONTAINER-REGISTRY}
 
 .PHONY: undeploy
-undeploy: ## (Cloud): Undeploy code
+undeploy: ## (Cloud): Deploy code
 	@ aws cloudformation delete-stack --stack-name ${STACK-NAME}
 
 help:

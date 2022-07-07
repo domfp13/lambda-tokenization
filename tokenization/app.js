@@ -5,8 +5,6 @@
 const AWS = require('aws-sdk')
 AWS.config.update({region: process.env.AWS_REGION})
 
-const URL_EXPIRATION_SECONDS = 20
-
 /**
  *
  * Event doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format
@@ -24,12 +22,36 @@ const URL_EXPIRATION_SECONDS = 20
  */
 exports.lambdaHandler = async (event, context, callback) => {
 
-    let fileName = getFileName(event);
+    try {
+        return JSON.stringify({
+            'statusCode': 200,
+            'body': event
+        });
+    }
+    catch (err) {
+        console.error(err, err.stack);
+    }
+/*
+    try {
+        let data = getData(event);
+        let tokenizeData = [];
 
-    // HTTP 200 OK, send URL
-    return JSON.stringify({
-        tokenizeString: fileName
-    });
+        for (const dataKey in data) {
+            tokenizeData.push([parseInt(dataKey), {'value': '******'}])
+        }
+
+        let body = {"data": tokenizeData};
+
+        return {
+            'statusCode': 200,
+            'body': body
+        }
+    }
+    catch(err) {
+        console.error(err, err.stack);
+    }
+*/
+
 }
 
 /**
@@ -38,13 +60,11 @@ exports.lambdaHandler = async (event, context, callback) => {
  * @param {Object} event - API Gateway Lambda Proxy Input Format
  *
  * Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
- * @returns string fileName - File's name to be inserted into S3 bucket
+ * @returns  - Body passed in the event of the REST API call.
  *
  */
-const getFileName = function (event) {
-
-    if (event.headers && event.headers !== "") {
-        return event.headers['file-name'];
+const getData = function (event) {
+    if (event.body && event.body !== "") {
+        return event.body['data'];
     }
-
 };
