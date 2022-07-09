@@ -1,10 +1,22 @@
 {
   "body": {
     "data": [
-      [0, "Alex"],
-      [1, "Steve"],
-      [2, "Alice"],
-      [3, "Adrian"]
+      [
+        0,
+        "Alex"
+      ],
+      [
+        1,
+        "Steve"
+      ],
+      [
+        2,
+        "Alice"
+      ],
+      [
+        3,
+        "Adrian"
+      ]
     ]
   },
   "resource": "/{proxy+}",

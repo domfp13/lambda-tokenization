@@ -23,48 +23,20 @@ AWS.config.update({region: process.env.AWS_REGION})
 exports.lambdaHandler = async (event, context, callback) => {
 
     try {
-        return JSON.stringify({
-            'statusCode': 200,
-            'body': event
-        });
+        let data = atob(event.body['data']);
+        let tokenizedData = [];
+        for (const dataKey in data) {
+            tokenizedData.push([parseInt(dataKey), 'XXXXX']);
+            console.log('what is this',dataKey);
+        }
+        return JSON.stringify(
+            {
+                'statusCode': 200,
+                'data': tokenizedData
+            }
+        );
     }
     catch (err) {
-        console.error(err, err.stack);
+        console.log('here is the error',err);
     }
-/*
-    try {
-        let data = getData(event);
-        let tokenizeData = [];
-
-        for (const dataKey in data) {
-            tokenizeData.push([parseInt(dataKey), {'value': '******'}])
-        }
-
-        let body = {"data": tokenizeData};
-
-        return {
-            'statusCode': 200,
-            'body': body
-        }
-    }
-    catch(err) {
-        console.error(err, err.stack);
-    }
-*/
-
 }
-
-/**
- *
- * Event doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format
- * @param {Object} event - API Gateway Lambda Proxy Input Format
- *
- * Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
- * @returns  - Body passed in the event of the REST API call.
- *
- */
-const getData = function (event) {
-    if (event.body && event.body !== "") {
-        return event.body['data'];
-    }
-};
